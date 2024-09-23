@@ -1,0 +1,11 @@
+[package]
+name = "rust-auth-sdk"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "^1.0", features = ["derive"] }
+serde_json = "^1.0"
+reqwest = { version = "^0.12", features = ["json", "multipart"] }
+tokio = { version = "1.40.0", features = ["full"] }
+anyhow = "1.0.89"
