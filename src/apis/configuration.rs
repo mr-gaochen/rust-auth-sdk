@@ -1,3 +1,5 @@
+use once_cell::sync::Lazy;
+
 #[derive(Debug, Clone)]
 pub struct Configuration {
     pub base_path: String,
@@ -13,7 +15,7 @@ impl Configuration {
 }
 
 // 静态的 Lazy 初始化，确保 Client 只被创建一次
-pub static HTTP_CLIENT: Lazy<Client> = Lazy::new(|| Client::new());
+pub static HTTP_CLIENT: Lazy<reqwest::Client> = Lazy::new(|| reqwest::Client::new());
 
 impl Default for Configuration {
     fn default() -> Self {
