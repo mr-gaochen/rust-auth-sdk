@@ -37,6 +37,35 @@ pub async fn get_user_info(config: &Configuration) -> Result<UserInfo> {
     Ok(user_info) // 返回 UserInfo
 }
 
+/// 根据用户id获取当前用户信息
+pub async fn get_user_info_by_id(config: &Configuration, user_id: i64) -> Result<UserInfo> {
+    let uri_str = format!("{}/v1/user/info/{}", config.base_path, user_id);
+    let client = &config.client;
+    let request_builder = client.get(uri_str);
+    let response = request_builder
+        .send()
+        .await
+        .context("Auth check - Failed to send request")?;
+    if !response.status().is_success() {
+        return Err(anyhow::anyhow!("Error status: {}", response.status()));
+    }
+
+    let body = response
+        .text()
+        .await
+        .context("Failed to read response body")?;
+
+    let data: Value = serde_json::from_str(&body).context("Failed to parse JSON response")?;
+
+    if data["code"] != "200" {
+        return Err(anyhow::anyhow!("Error code: {}", data["code"]));
+    }
+    let user_info: UserInfo =
+        serde_json::from_value(data["data"].clone()).context("Failed to parse UserInfo")?;
+
+    Ok(user_info) // 返回 UserInfo
+}
+
 #[cfg(test)]
 mod tests {
     use crate::apis::configuration::Configuration;
